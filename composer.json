@@ -1,0 +1,21 @@
+{
+	"name": "25th/migrations",
+	"authors": [
+		{
+			"name": "Martin Prebio",
+			"email": "mp@25th-floor.com"
+		}
+	],
+	"require": {
+		"php": ">=5.3",
+		"symfony/Console": "2.0.*"
+	},
+	"autoload": {
+		"psr-0": {
+			"TwentyFifth": "library/"
+		}
+	},
+	"bin" : [
+		"bin/migrations.php"
+	]
+}

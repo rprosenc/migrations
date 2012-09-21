@@ -2,6 +2,8 @@
 
 namespace TwentyFifth\Migrations\Manager;
 
+use \TwentyFifth\Migrations\Exception;
+
 class FileManager
 {
 
@@ -10,7 +12,7 @@ class FileManager
 	public function __construct($directory)
 	{
 		if (!is_dir($directory)) {
-			throw new \Exception('Directory does not exist');
+			throw new Exception\RuntimeException('Directory does not exist');
 		}
 
 		$this->directory = $directory;

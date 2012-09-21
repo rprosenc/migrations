@@ -15,7 +15,7 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"TwentyFifth": "library/"
+			"TwentyFifth": "lib/"
 		}
 	},
 	"bin" : [

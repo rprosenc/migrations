@@ -49,14 +49,21 @@ class SchemaManager
 	{
 		if (!$this->doesMigrationsTableExist()) {
 			$create_sql = sprintf(
-				'
-				CREATE TABLE %s (
+				'CREATE TABLE %s (
 					mig_title text NOT NULL PRIMARY KEY,
 					mig_applied timestamp NOT NULL DEFAULT NOW()
 				);
 			', $this->getMigrationTableName());
 
+			$comment_sql = sprintf(
+				'COMMENT ON TABLE %1$s IS \'Database migration information\'',
+				$this->getMigrationTableName()
+			);
+
+			$this->getConnection()->beginTransaction();
 			$this->getConnection()->query($create_sql);
+			$this->getConnection()->query($comment_sql);
+			$this->getConnection()->commit();
 		}
 	}
 

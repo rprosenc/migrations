@@ -49,6 +49,7 @@ class Apply
 			$this->outputErrorsAndExit($output);
 		}
 
+		// Choose next migration configuration
 		$next_migration_short_name = array_shift(array_keys($missing_migrations));
 		$next_migration_path = $missing_migrations[$next_migration_short_name];
 

@@ -23,6 +23,8 @@ class Status
 
 		if (count($missing_migrations)) {
 			$output->writeln('The following migrations are not applied:');
+		} else {
+			$output->writeln('Database is up to date.');
 		}
 
 		foreach ($missing_migrations as $shortname => $path) {

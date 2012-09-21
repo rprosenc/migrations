@@ -1,0 +1,21 @@
+<phpunit bootstrap="./bootstrap.php" colors="true" timeoutForSmallTests="15">
+
+	<testsuite name="Unit Tests">
+		<directory>./unit/</directory>
+	</testsuite>
+
+	<logging>
+		<log type="coverage-html" target="./log/coverage" charset="UTF-8" yui="true" highlight="true" lowUpperBound="50"
+		     highLowerBound="80"/>
+		<log type="testdox-html" target="./log/testdox.html"/>
+	</logging>
+
+	<filter>
+		<whitelist>
+			<directory suffix=".php">../lib/</directory>
+			<exclude>
+			</exclude>
+		</whitelist>
+	</filter>
+
+</phpunit>

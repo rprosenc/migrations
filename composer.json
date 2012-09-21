@@ -10,6 +10,9 @@
 		"php": ">=5.3",
 		"symfony/Console": "2.0.*"
 	},
+	"require-dev": {
+		"mikey179/vfsStream": "1.1.*"
+	},
 	"autoload": {
 		"psr-0": {
 			"TwentyFifth": "library/"

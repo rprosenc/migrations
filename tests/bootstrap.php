@@ -23,6 +23,8 @@ if (is_dir(__DIR__ . '/../application/')) {
 	die('Could not set APPLICATION_PATH'.PHP_EOL);
 }
 
+require_once 'ArrayDataSet.php';
+
 //if (getenv('APPLICATION_ENV')) {
 //	define('APPLICATION_ENV', getenv('APPLICATION_ENV'));
 //} else {

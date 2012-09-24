@@ -7,42 +7,54 @@ use Symfony\Component\Console;
 class SchemaManager
 {
 	/** @var \Doctrine\DBAL\Connection */
-	private $connection;
+	private $doctrine_connection;
 
 	/** @var string */
 	private $migration_table_name = 'migrations';
 
+	/** @var  */
+	private $pg_connection;
+
 	public function __construct(\Doctrine\DBAL\Connection $connection)
 	{
-		$this->connection = $connection;
+		$this->doctrine_connection = $connection;
 
 		$this->ensureMigrationsTableExists();
 	}
 
-	protected function getMigrationTableName()
+	public function getMigrationTableName()
 	{
 		return $this->migration_table_name;
 	}
 
 	protected function getConnection()
 	{
-		return $this->connection;
+		if (!isset($this->pg_connection)) {
+			$c = $this->doctrine_connection;
+
+			$conn_string = sprintf(
+				'host=%s port=%s dbname=%s user=%s password=%s',
+				$c->getHost(),
+				$c->getPort(),
+				$c->getDatabase(),
+				$c->getUsername(),
+				$c->getPassword()
+			);
+			$this->pg_connection = pg_connect($conn_string);
+		}
+
+		return $this->pg_connection;
 	}
 
 	public function doesMigrationsTableExist()
 	{
-		/** @var $stmt \Doctrine\DBAL\Driver\Statement */
-		$stmt = $this->getConnection()->prepare(sprintf('SELECT * FROM %s LIMIT 1', $this->getMigrationTableName()));
+		$result = pg_query_params(
+			$this->getConnection(),
+			'SELECT count(relname) as count FROM pg_class WHERE relname=$1',
+			array($this->getMigrationTableName())
+		);
 
-		try {
-			if ($stmt->execute() === false){
-				return false;
-			} else {
-				return true;
-			}
-		} catch (\Exception $e) {
-			return false;
-		}
+		return (bool) pg_fetch_result($result, 0, 0);
 	}
 
 	public function ensureMigrationsTableExists()
@@ -55,15 +67,14 @@ class SchemaManager
 				);
 			', $this->getMigrationTableName());
 
-			$comment_sql = sprintf(
-				'COMMENT ON TABLE %1$s IS \'Database migration information\'',
+			$create_sql .= sprintf(
+				'COMMENT ON TABLE %s IS \'Database migration information\'',
 				$this->getMigrationTableName()
 			);
 
-			$this->getConnection()->beginTransaction();
-			$this->getConnection()->query($create_sql);
-			$this->getConnection()->query($comment_sql);
-			$this->getConnection()->commit();
+			pg_query($this->getConnection(), 'BEGIN');
+			pg_query($this->getConnection(), $create_sql);
+			pg_query($this->getConnection(), 'COMMIT');
 		}
 	}
 
@@ -73,11 +84,10 @@ class SchemaManager
 			SELECT *
 			FROM %s;
 		';
-		/** @var $stmt \Doctrine\DBAL\Statement */
-		$stmt = $this->getConnection()->prepare(sprintf($sql, $this->getMigrationTableName()));
-		$stmt->execute();
 
-		while ($line = $stmt->fetch()) {
+		$result = pg_query($this->getConnection(), sprintf($sql, $this->getMigrationTableName()));
+
+		while ($line = pg_fetch_assoc($result)) {
 			unset($migration_list[$line['mig_title']]);
 		}
 
@@ -86,18 +96,22 @@ class SchemaManager
 
 	public function executeMigration($name, $sql, Console\Output\OutputInterface $output)
 	{
-		$connection = $this->getConnection();
+		if (empty($sql)) {
+			throw new \TwentyFifth\Migrations\Exception\RuntimeException(sprintf('Migration "%s" has no content', $name));
+		}
+
+		$insert_sql = sprintf('INSERT INTO %s (mig_title) VALUES ($1)', $this->getMigrationTableName());
 
 		$output->writeln('Starting '.$name);
-		$connection->beginTransaction();
+		pg_query($this->getConnection(), 'BEGIN');
 		try {
-			$connection->exec($sql);
-			$connection->insert($this->getMigrationTableName(), array('mig_title' => $name));
-			$connection->commit();
+			pg_query($this->getConnection(), $sql);
+			pg_query_params($this->getConnection(), $insert_sql, array($name));
+			pg_query($this->getConnection(), 'COMMIT');
 			$output->writeln($name.' is committed');
 			return true;
 		} catch (\Exception $e) {
-			$connection->rollback();
+			pg_query($this->getConnection(), 'ROLLBACK');
 			$output->writeln('Failed: '.$e->getMessage());
 			return false;
 		}

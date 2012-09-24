@@ -4,6 +4,10 @@
 		<directory>./unit/</directory>
 	</testsuite>
 
+	<testsuite name="Component Tests">
+		<directory>./component/</directory>
+	</testsuite>
+
 	<logging>
 		<log type="coverage-html" target="./log/coverage" charset="UTF-8" yui="true" highlight="true" lowUpperBound="50"
 		     highLowerBound="80"/>

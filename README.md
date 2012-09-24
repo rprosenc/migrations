@@ -46,3 +46,5 @@ migrations apply
 `migrations apply all` will apply all missing changesets.
 
 `migrations apply <sql-file-name>` will apply the changeset <sql-file-name>.
+
+With the `--only-mark` option you can apply the migration without executing it.

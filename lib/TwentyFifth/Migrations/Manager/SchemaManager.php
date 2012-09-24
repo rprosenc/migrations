@@ -100,13 +100,11 @@ class SchemaManager
 			throw new \TwentyFifth\Migrations\Exception\RuntimeException(sprintf('Migration "%s" has no content', $name));
 		}
 
-		$insert_sql = sprintf('INSERT INTO %s (mig_title) VALUES ($1)', $this->getMigrationTableName());
-
 		$output->writeln('Starting '.$name);
 		pg_query($this->getConnection(), 'BEGIN');
 		try {
 			pg_query($this->getConnection(), $sql);
-			pg_query_params($this->getConnection(), $insert_sql, array($name));
+			$this->markMigration($name);
 			pg_query($this->getConnection(), 'COMMIT');
 			$output->writeln($name.' is committed');
 			return true;
@@ -115,5 +113,11 @@ class SchemaManager
 			$output->writeln('Failed: '.$e->getMessage());
 			return false;
 		}
+	}
+
+	public function markMigration($name)
+	{
+		$insert_sql = sprintf('INSERT INTO %s (mig_title) VALUES ($1)', $this->getMigrationTableName());
+		pg_query_params($this->getConnection(), $insert_sql, array($name));
 	}
 }

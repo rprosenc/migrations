@@ -29,7 +29,7 @@ class Apply
 	{
 		parent::execute($input, $output);
 
-		$target = strtolower($input->getArgument('what'));
+		$target = $input->getArgument('what');
 		$only_mark = $input->getOption('only-mark');
 
 		switch ($target) {

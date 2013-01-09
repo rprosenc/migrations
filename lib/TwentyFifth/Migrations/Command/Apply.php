@@ -51,7 +51,7 @@ class Apply
 
 		if (0 === count($missing_migrations)) {
 			$this->errors[] = "All migration files are already applied.\nNothing to do";
-			$this->outputErrorsAndExit($output);
+			$this->outputErrorsAndExit($output,0);
 		}
 
 		// Choose next migration configuration
@@ -73,7 +73,7 @@ class Apply
 
 		if (0 === count($missing_migrations)) {
 			$this->errors[] = "All migration files are already applied.\nNothing to do";
-			$this->outputErrorsAndExit($output);
+			$this->outputErrorsAndExit($output,0);
 		}
 
 		foreach ($missing_migrations as $shortname => $path) {

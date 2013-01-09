@@ -6,6 +6,7 @@ use TwentyFifth\Migrations\Manager\SchemaManager;
 use TwentyFifth\Migrations\Manager\FileManager;
 
 use Symfony\Component\Console;
+use Symfony\Component\Console\Input\InputOption;
 use Bisna\Doctrine\Container as DoctrineContainer;
 
 abstract class AbstractCommand
@@ -28,9 +29,9 @@ abstract class AbstractCommand
 	{
 		parent::__construct($name);
 
-		$this->config = new \Zend_Config_Ini(APPLICATION_PATH . '/configs/application.ini', APPLICATION_ENV);
+		$this->addOption('database',null,InputOption::VALUE_REQUIRED,'Override Database');
 
-		$this->bisna_container = new DoctrineContainer($this->config->resources->doctrine->toArray());
+		$this->config = new \Zend_Config_Ini(APPLICATION_PATH . '/configs/application.ini', APPLICATION_ENV);
 	}
 
 	protected function outputErrorsAndExit(Console\Output\OutputInterface $output, $code = 1)
@@ -42,8 +43,10 @@ abstract class AbstractCommand
 
 	public function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
 	{
+		$database = (string) $input->getOption('database');
+
 		try {
-			$this->schema_manager = new SchemaManager($this->getConnection());
+			$this->schema_manager = new SchemaManager($this->getConnection($database));
 			$this->file_manager = new FileManager(APPLICATION_PATH . '/../docs/sql/');
 		} catch (\Exception $e) {
 			$this->errors[] = $e->getMessage();
@@ -52,10 +55,35 @@ abstract class AbstractCommand
 	}
 
 	/**
+	 * get Config as an Array with the possibility to override the database name
+	 *
+	 * @param string $database
+	 *
+	 * @return array
+	 */
+	protected function getConfig($database = '')
+	{
+		$config = $this->config->resources->doctrine->toArray();
+		if (strlen(trim($database)) == 0) {
+			return $config;
+		}
+
+		// override database name
+		$defaultConnection = $config['dbal']['defaultConnection'];
+		$config['dbal']['connections'][$defaultConnection]['parameters']['dbname'] = $database;
+		return $config;
+	}
+
+	/**
+	 * @param string $database
+	 *
 	 * @return \Doctrine\DBAL\Connection
 	 */
-	protected function getConnection()
+	protected function getConnection($database)
 	{
+		if (is_null($this->bisna_container)) {
+			$this->bisna_container = new DoctrineContainer($this->getConfig($database));
+		}
 		return $this->bisna_container->getConnection();
 	}
 

@@ -22,7 +22,7 @@ class Status
 		$missing_migrations = $this->schema_manager->getNotAppliedMigrations($file_list);
 
 		if (count($missing_migrations)) {
-			$output->writeln('The following migrations are not applied:');
+			$output->writeln(sprintf('The following %d migrations are not applied:', count($missing_migrations)));
 		} else {
 			$output->writeln('Database is up to date.');
 		}

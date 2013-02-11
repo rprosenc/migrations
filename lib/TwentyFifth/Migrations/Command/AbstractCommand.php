@@ -63,15 +63,7 @@ abstract class AbstractCommand
 	 */
 	protected function getConfig($database = '')
 	{
-		$config = $this->config->resources->doctrine->toArray();
-		if (strlen(trim($database)) == 0) {
-			return $config;
-		}
-
-		// override database name
-		$defaultConnection = $config['dbal']['defaultConnection'];
-		$config['dbal']['connections'][$defaultConnection]['parameters']['dbname'] = $database;
-		return $config;
+		return \TwentyFifth\DBUnit\Database\Connector\DoctrineAdapter::getDoctrineConfig($this->config, $database);
 	}
 
 	/**

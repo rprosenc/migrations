@@ -7,10 +7,10 @@
 		}
 	],
 	"require": {
-		"php": ">=5.3",
-		"symfony/Console": "2.0.*",
 		"doctrine/dbal": ">2.1.0",
-		"ext-pgsql": "*"
+		"ext-pgsql": "*",
+		"php": ">=5.3",
+		"symfony/Console": "2.0.*"
 	},
 	"require-dev": {
 		"mikey179/vfsStream": "1.1.*"

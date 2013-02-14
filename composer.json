@@ -6,10 +6,17 @@
 			"email": "mp@25th-floor.com"
 		}
 	],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://composer.25th-floor.com"
+        }
+    ],
 	"require": {
+		"php": ">=5.3",
+        "25th/dbunit": "*@dev",
 		"doctrine/dbal": ">2.1.0",
 		"ext-pgsql": "*",
-		"php": ">=5.3",
 		"symfony/Console": "2.0.*"
 	},
 	"require-dev": {

@@ -14,7 +14,7 @@
     ],
 	"require": {
 		"php": ">=5.3",
-        "25th/dbunit": "*@dev",
+        "25th/dbunit": "0.1.*",
 		"doctrine/dbal": ">2.1.0",
 		"ext-pgsql": "*",
 		"symfony/Console": "2.0.*"

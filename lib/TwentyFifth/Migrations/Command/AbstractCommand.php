@@ -55,6 +55,28 @@ abstract class AbstractCommand
 	}
 
 	/**
+	 * get's the config and allows us to override the database name
+	 *
+	 * @param \Zend_Config $zend_config
+	 * @param string $database
+	 *
+	 * @return array
+	 */
+	static public function getDoctrineConfig(\Zend_Config $zend_config, $database = '')
+	{
+		$config = $zend_config->resources->doctrine->toArray();
+
+		if (strlen(trim($database)) == 0) {
+			return $config;
+		}
+
+		// override database name
+		$defaultConnection = $config['dbal']['defaultConnection'];
+		$config['dbal']['connections'][$defaultConnection]['parameters']['dbname'] = $database;
+		return $config;
+	}
+
+	/**
 	 * get Config as an Array with the possibility to override the database name
 	 *
 	 * @param string $database
@@ -63,7 +85,7 @@ abstract class AbstractCommand
 	 */
 	protected function getConfig($database = '')
 	{
-		return \TwentyFifth\DBUnit\Database\Connector\DoctrineAdapter::getDoctrineConfig($this->config, $database);
+		return self::getDoctrineConfig($this->config, $database);
 	}
 
 	/**

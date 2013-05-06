@@ -26,10 +26,11 @@ abstract class AbstractCommand
 
 	protected $errors = array();
 
-	public function __construct(ConfigInterface $configManager, $name = null)
+	public function __construct(ConfigInterface $configManager, FileManager $fileManager, $name = null)
 	{
 		parent::__construct($name);
 		$this->config_manager = $configManager;
+		$this->file_manager = $fileManager;
 
 		$this->addOption('database',null,InputOption::VALUE_REQUIRED,'Override Database');
 	}
@@ -51,7 +52,6 @@ abstract class AbstractCommand
 
 		try {
 			$this->schema_manager = new SchemaManager($this->config_manager);
-			$this->file_manager = new FileManager(APPLICATION_PATH . '/../docs/sql/');
 		} catch (\Exception $e) {
 			$this->errors[] = $e->getMessage();
 			$this->outputErrorsAndExit($output, 1);

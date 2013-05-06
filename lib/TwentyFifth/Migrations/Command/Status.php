@@ -4,13 +4,14 @@ namespace TwentyFifth\Migrations\Command;
 
 use Symfony\Component\Console;
 use TwentyFifth\Migrations\Manager\ConfigManager\ConfigInterface;
+use TwentyFifth\Migrations\Manager\FileManager;
 
 class Status
 	extends AbstractCommand
 {
-	public function __construct(ConfigInterface $configManager)
+	public function __construct(ConfigInterface $configManager, FileManager $fileManager)
 	{
-		parent::__construct($configManager, 'status');
+		parent::__construct($configManager, $fileManager, 'status');
 
 		$this->setDescription('Displays the current schema version');
 	}

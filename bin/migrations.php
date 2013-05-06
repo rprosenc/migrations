@@ -24,18 +24,18 @@ if (getenv('APPLICATION_ENV')) {
 }
 
 if (is_dir(__DIR__ . '/../application/')) {
-	define('APPLICATION_PATH', __DIR__ . '/../application/');
 	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF1Manager(__DIR__ . '/../application/');
+	$fileManager = new \TwentyFifth\Migrations\Manager\FileManager(__DIR__ . '/../docs/sql/');
 } else if (is_dir(__DIR__ . '/../../../../application/')) {
-	define('APPLICATION_PATH', __DIR__ . '/../../../../application/');
 	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF1Manager(__DIR__ . '/../../../../application/');
+	$fileManager = new \TwentyFifth\Migrations\Manager\FileManager(__DIR__ . '/../../../../docs/sql/');
 } else {
 	die('Could not set APPLICATION_PATH'.PHP_EOL);
 }
 
 $application = new Console\Application('25th Migrations', '0.1.0');
 
-$application->add(new Command\Status($configManager));
-$application->add(new Command\Apply($configManager));
+$application->add(new Command\Status($configManager, $fileManager));
+$application->add(new Command\Apply($configManager, $fileManager));
 
 $application->run();

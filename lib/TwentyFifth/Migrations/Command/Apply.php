@@ -10,9 +10,9 @@ use TwentyFifth\Migrations\Manager\ConfigManager\ConfigInterface;
 class Apply
 	extends AbstractCommand
 {
-	public function __construct(ConfigInterface $configManager)
+	public function __construct(ConfigInterface $configManager, $fileManager)
 	{
-		parent::__construct($configManager, 'apply');
+		parent::__construct($configManager, $fileManager, 'apply');
 
 		$this->setDescription('Do ze magic migration stuff (aka. executing SQL scripts)');
 

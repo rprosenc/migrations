@@ -15,7 +15,6 @@
 	"require": {
 		"php": ">=5.3",
 		"doctrine/dbal": ">2.1.0",
-		"guilhermeblanco/ZendFramework1-Doctrine2": "*@dev",
 		"ext-pgsql": "*",
 		"symfony/Console": "2.0.*"
 	},

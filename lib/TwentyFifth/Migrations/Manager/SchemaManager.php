@@ -2,14 +2,13 @@
 
 namespace TwentyFifth\Migrations\Manager;
 
-use Doctrine\DBAL\Connection;
 use Symfony\Component\Console;
 use TwentyFifth\Migrations\Exception\RuntimeException;
 
 class SchemaManager
 {
-	/** @var Connection */
-	private $doctrine_connection;
+	/** @var array */
+	private $connection_config;
 
 	/** @var string */
 	private $migration_table_name = 'migrations';
@@ -17,9 +16,9 @@ class SchemaManager
 	/** @var  */
 	private $pg_connection;
 
-	public function __construct(Connection $connection)
+	public function __construct(array $connection_config)
 	{
-		$this->doctrine_connection = $connection;
+		$this->connection_config = $connection_config;
 
 		$this->ensureMigrationsTableExists();
 	}
@@ -32,15 +31,13 @@ class SchemaManager
 	protected function getConnection()
 	{
 		if (!isset($this->pg_connection)) {
-			$c = $this->doctrine_connection;
-
 			$conn_string = sprintf(
 				'host=%s port=%s dbname=%s user=%s password=%s',
-				$c->getHost(),
-				$c->getPort(),
-				$c->getDatabase(),
-				$c->getUsername(),
-				$c->getPassword()
+				$this->connection_config['host'],
+				$this->connection_config['port'],
+				$this->connection_config['dbname'],
+				$this->connection_config['user'],
+				$this->connection_config['password']
 			);
 			$this->pg_connection = pg_connect($conn_string);
 		}

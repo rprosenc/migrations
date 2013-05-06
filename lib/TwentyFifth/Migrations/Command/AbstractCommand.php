@@ -46,34 +46,12 @@ abstract class AbstractCommand
 		$database = (string) $input->getOption('database');
 
 		try {
-			$this->schema_manager = new SchemaManager($this->getConnection($database));
+			$this->schema_manager = new SchemaManager($this->getConfig($database));
 			$this->file_manager = new FileManager(APPLICATION_PATH . '/../docs/sql/');
 		} catch (\Exception $e) {
 			$this->errors[] = $e->getMessage();
 			$this->outputErrorsAndExit($output, 1);
 		}
-	}
-
-	/**
-	 * get's the config and allows us to override the database name
-	 *
-	 * @param \Zend_Config $zend_config
-	 * @param string $database
-	 *
-	 * @return array
-	 */
-	static public function getDoctrineConfig(\Zend_Config $zend_config, $database = '')
-	{
-		$config = $zend_config->resources->doctrine->toArray();
-
-		if (strlen(trim($database)) == 0) {
-			return $config;
-		}
-
-		// override database name
-		$defaultConnection = $config['dbal']['defaultConnection'];
-		$config['dbal']['connections'][$defaultConnection]['parameters']['dbname'] = $database;
-		return $config;
 	}
 
 	/**
@@ -85,20 +63,9 @@ abstract class AbstractCommand
 	 */
 	protected function getConfig($database = '')
 	{
-		return self::getDoctrineConfig($this->config, $database);
-	}
-
-	/**
-	 * @param string $database
-	 *
-	 * @return \Doctrine\DBAL\Connection
-	 */
-	protected function getConnection($database)
-	{
-		if (is_null($this->bisna_container)) {
-			$this->bisna_container = new DoctrineContainer($this->getConfig($database));
-		}
-		return $this->bisna_container->getConnection();
+		$config = $this->config->resources->doctrine->toArray();
+		$defaultConnection = $config['dbal']['defaultConnection'];
+		return $config['dbal']['connections'][$defaultConnection]['parameters'];
 	}
 
 	protected function getMissingMigrations()

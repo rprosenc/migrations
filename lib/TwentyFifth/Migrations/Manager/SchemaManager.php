@@ -2,11 +2,13 @@
 
 namespace TwentyFifth\Migrations\Manager;
 
+use Doctrine\DBAL\Connection;
 use Symfony\Component\Console;
+use TwentyFifth\Migrations\Exception\RuntimeException;
 
 class SchemaManager
 {
-	/** @var \Doctrine\DBAL\Connection */
+	/** @var Connection */
 	private $doctrine_connection;
 
 	/** @var string */
@@ -15,7 +17,7 @@ class SchemaManager
 	/** @var  */
 	private $pg_connection;
 
-	public function __construct(\Doctrine\DBAL\Connection $connection)
+	public function __construct(Connection $connection)
 	{
 		$this->doctrine_connection = $connection;
 
@@ -97,7 +99,7 @@ class SchemaManager
 	public function executeMigration($name, $sql, Console\Output\OutputInterface $output)
 	{
 		if (empty($sql)) {
-			throw new \TwentyFifth\Migrations\Exception\RuntimeException(sprintf('Migration "%s" has no content', $name));
+			throw new RuntimeException(sprintf('Migration "%s" has no content', $name));
 		}
 
 		$output->writeln('Starting '.$name);

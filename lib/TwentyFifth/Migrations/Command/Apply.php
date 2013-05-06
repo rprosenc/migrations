@@ -5,13 +5,14 @@ namespace TwentyFifth\Migrations\Command;
 use Symfony\Component\Console;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use TwentyFifth\Migrations\Manager\ConfigManager\ConfigInterface;
 
 class Apply
 	extends AbstractCommand
 {
-	public function __construct()
+	public function __construct(ConfigInterface $configManager)
 	{
-		parent::__construct('apply');
+		parent::__construct($configManager, 'apply');
 
 		$this->setDescription('Do ze magic migration stuff (aka. executing SQL scripts)');
 

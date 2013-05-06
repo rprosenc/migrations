@@ -3,13 +3,14 @@
 namespace TwentyFifth\Migrations\Command;
 
 use Symfony\Component\Console;
+use TwentyFifth\Migrations\Manager\ConfigManager\ConfigInterface;
 
 class Status
 	extends AbstractCommand
 {
-	public function __construct()
+	public function __construct(ConfigInterface $configManager)
 	{
-		parent::__construct('status');
+		parent::__construct($configManager, 'status');
 
 		$this->setDescription('Displays the current schema version');
 	}

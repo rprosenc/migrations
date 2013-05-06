@@ -4,11 +4,12 @@ namespace TwentyFifth\Migrations\Manager;
 
 use Symfony\Component\Console;
 use TwentyFifth\Migrations\Exception\RuntimeException;
+use TwentyFifth\Migrations\Manager\ConfigManager\ConfigInterface;
 
 class SchemaManager
 {
-	/** @var array */
-	private $connection_config;
+	/** @var ConfigInterface */
+	private $configManager;
 
 	/** @var string */
 	private $migration_table_name = 'migrations';
@@ -16,9 +17,9 @@ class SchemaManager
 	/** @var  */
 	private $pg_connection;
 
-	public function __construct(array $connection_config)
+	public function __construct(ConfigInterface $configManager)
 	{
-		$this->connection_config = $connection_config;
+		$this->configManager = $configManager;
 
 		$this->ensureMigrationsTableExists();
 	}
@@ -33,11 +34,11 @@ class SchemaManager
 		if (!isset($this->pg_connection)) {
 			$conn_string = sprintf(
 				'host=%s port=%s dbname=%s user=%s password=%s',
-				$this->connection_config['host'],
-				$this->connection_config['port'],
-				$this->connection_config['dbname'],
-				$this->connection_config['user'],
-				$this->connection_config['password']
+				$this->configManager->getHost(),
+				$this->configManager->getPort(),
+				$this->configManager->getDatabase(),
+				$this->configManager->getUsername(),
+				$this->configManager->getPassword()
 			);
 			$this->pg_connection = pg_connect($conn_string);
 		}

@@ -17,23 +17,25 @@ if ((!$loader = includeIfExists(__DIR__.'/../../../autoload.php'))) {
 		'php composer.phar install'.PHP_EOL);
 }
 
-if (is_dir(__DIR__ . '/../application/')) {
-	define('APPLICATION_PATH', __DIR__ . '/../application/');
-} else if (is_dir(__DIR__ . '/../../../../application/')) {
-	define('APPLICATION_PATH', __DIR__ . '/../../../../application/');
-} else {
-	die('Could not set APPLICATION_PATH'.PHP_EOL);
-}
-
 if (getenv('APPLICATION_ENV')) {
 	define('APPLICATION_ENV', getenv('APPLICATION_ENV'));
 } else {
 	die('Please set the APPLICATION_ENV'.PHP_EOL);
 }
 
+if (is_dir(__DIR__ . '/../application/')) {
+	define('APPLICATION_PATH', __DIR__ . '/../application/');
+	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF1Manager(__DIR__ . '/../application/');
+} else if (is_dir(__DIR__ . '/../../../../application/')) {
+	define('APPLICATION_PATH', __DIR__ . '/../../../../application/');
+	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF1Manager(__DIR__ . '/../../../../application/');
+} else {
+	die('Could not set APPLICATION_PATH'.PHP_EOL);
+}
+
 $application = new Console\Application('25th Migrations', '0.1.0');
 
-$application->add(new Command\Status());
-$application->add(new Command\Apply());
+$application->add(new Command\Status($configManager));
+$application->add(new Command\Apply($configManager));
 
 $application->run();

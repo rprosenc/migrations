@@ -23,15 +23,34 @@ if (getenv('APPLICATION_ENV')) {
 	die('Please set the APPLICATION_ENV'.PHP_EOL);
 }
 
+$sqlDirectory = '';
+
+// ZF1
 if (is_dir(__DIR__ . '/../application/')) {
 	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF1Manager(__DIR__ . '/../application/');
-	$fileManager = new \TwentyFifth\Migrations\Manager\FileManager(__DIR__ . '/../docs/sql/');
+	$sqlDirectory = __DIR__ . '/../docs/sql/';
 } else if (is_dir(__DIR__ . '/../../../../application/')) {
 	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF1Manager(__DIR__ . '/../../../../application/');
-	$fileManager = new \TwentyFifth\Migrations\Manager\FileManager(__DIR__ . '/../../../../docs/sql/');
+	$sqlDirectory = __DIR__ . '/../../../../docs/sql/';
+
+// ZF2
+} else if (is_readable(__DIR__ . '/../config/application.config.php')) {
+	chdir(dirname(__DIR__));
+	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF2Manager(require __DIR__ . '/../config/application.config.php');
+
+	$sqlDirectory = __DIR__ . '/../docs/sql/';
+} else if (is_readable(__DIR__ . '/../../../../config/application.config.php')) {
+	chdir(dirname(__DIR__) . '/../../../');
+	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF2Manager(require __DIR__ . '/../../../../config/application.config.php');
+
+	$sqlDirectory = __DIR__ . '/../../../../docs/sql/';
+
+// UNKNOWN
 } else {
 	die('Could not set APPLICATION_PATH'.PHP_EOL);
 }
+
+$fileManager = new \TwentyFifth\Migrations\Manager\FileManager($sqlDirectory);
 
 $application = new Console\Application('25th Migrations', '0.1.0');
 

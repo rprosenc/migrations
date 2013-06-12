@@ -23,7 +23,7 @@ class SchemaManagerTest
 	{
 		if (!isset(self::$connection)) {
 			if (!isset(self::$pdo)) {
-				self::$pdo = new \PDO('pgsql:dbname=migrations_test', 'bountin');
+				self::$pdo = new \PDO('pgsql:dbname=migrations_test', 'postgres');
 			}
 
 			self::$connection = $this->createDefaultDBConnection(self::$pdo);

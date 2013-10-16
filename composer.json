@@ -18,7 +18,7 @@
 		"ext-pgsql": "*",
 		"phpunit/phpunit": "3.7.*",
 		"phpunit/dbunit": ">=1.2",
-		"symfony/Console": ">=2.0.*"
+		"symfony/Console": ">=2.0"
 	},
 	"require-dev": {
 		"mikey179/vfsStream": "1.1.*"

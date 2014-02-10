@@ -25,16 +25,8 @@ if (getenv('APPLICATION_ENV')) {
 
 $sqlDirectory = '';
 
-// ZF1
-if (is_dir(__DIR__ . '/../application/')) {
-	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF1Manager(__DIR__ . '/../application/');
-	$sqlDirectory = __DIR__ . '/../docs/sql/';
-} else if (is_dir(__DIR__ . '/../../../../application/')) {
-	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF1Manager(__DIR__ . '/../../../../application/');
-	$sqlDirectory = __DIR__ . '/../../../../docs/sql/';
-
 // ZF2
-} else if (is_readable(__DIR__ . '/../config/application.config.php')) {
+if (is_readable(__DIR__ . '/../config/application.config.php')) {
 	chdir(dirname(__DIR__));
 	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF2Manager(require __DIR__ . '/../config/application.config.php');
 
@@ -43,6 +35,14 @@ if (is_dir(__DIR__ . '/../application/')) {
 	chdir(dirname(__DIR__) . '/../../../');
 	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF2Manager(require __DIR__ . '/../../../../config/application.config.php');
 
+	$sqlDirectory = __DIR__ . '/../../../../docs/sql/';
+
+// ZF1
+} else if (is_dir(__DIR__ . '/../application/')) {
+	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF1Manager(__DIR__ . '/../application/');
+	$sqlDirectory = __DIR__ . '/../docs/sql/';
+} else if (is_dir(__DIR__ . '/../../../../application/')) {
+	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF1Manager(__DIR__ . '/../../../../application/');
 	$sqlDirectory = __DIR__ . '/../../../../docs/sql/';
 
 // UNKNOWN

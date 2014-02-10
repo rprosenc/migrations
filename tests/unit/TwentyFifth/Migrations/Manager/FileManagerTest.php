@@ -1,6 +1,6 @@
 <?php
 
-namespace TwentyFifth\Migrations\Test\Unit;
+namespace TwentyFifth\Migrations\Manager;
 
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;

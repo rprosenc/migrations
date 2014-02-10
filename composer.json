@@ -16,7 +16,9 @@
 		"php": ">=5.3",
 		"doctrine/dbal": ">2.1.0",
 		"ext-pgsql": "*",
-		"symfony/Console": "2.0.*"
+		"phpunit/phpunit": "3.7.*",
+		"phpunit/dbunit": ">=1.2",
+		"symfony/Console": ">=2.0"
 	},
 	"require-dev": {
 		"mikey179/vfsStream": "1.1.*"

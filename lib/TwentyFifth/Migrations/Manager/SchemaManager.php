@@ -103,7 +103,7 @@ class SchemaManager
 		$output->writeln('Starting '.$name);
 		pg_query($this->getConnection(), 'BEGIN');
 		try {
-			pg_query($this->getConnection(), $sql);
+			$this->executeSQL($sql);
 			$this->markMigration($name);
 			pg_query($this->getConnection(), 'COMMIT');
 			$output->writeln($name.' is committed');
@@ -115,9 +115,87 @@ class SchemaManager
 		}
 	}
 
+	public function executeSQL($sql)
+	{
+		if (!self::hasCopyFromStdin($sql)) {
+			pg_query($this->getConnection(), $sql);
+			return;
+		}
+
+		throw new RuntimeException("Copy is not yet implemented, use pg_dump --inserts if possible");
+
+//		$rows = self::extractCommandsFromSql($sql);
+//		foreach ($rows as $row) {
+//			switch ($row[0]) {
+//				case "pg_query":
+//					pg_query($this->getConnection(), $row[1]);
+//					break;
+//				case "pg_put_line":
+//					pg_put_line($this->getConnection(), $row[1]);
+//					break;
+//				case "pg_end_copy":
+//					pg_end_copy($this->getConnection());
+//					break;
+//				default:
+//					throw new RuntimeException(sprintf("Unknown SQL Command '%s'", $row[0]));
+//			}
+//		}
+	}
+
 	public function markMigration($name)
 	{
 		$insert_sql = sprintf('INSERT INTO %s (mig_title) VALUES ($1)', $this->getMigrationTableName());
 		pg_query_params($this->getConnection(), $insert_sql, array($name));
 	}
+
+	public static function hasCopyFromStdin($string)
+	{
+		// for perfomance issues, don't go further if not found anyway
+		if (stripos($string, 'copy') === false) {
+			return false;
+		}
+
+		return preg_match('/COPY .* FROM stdin;/i', $string) ? true : false;
+	}
+
+//	public static function extractCommandsFromSql($sql)
+//	{
+//		if (!self::hasCopyFromStdin($sql)) {
+//			return array(array("pg_query", $sql));
+//		}
+//
+//		$return = array();
+//
+//		$array = preg_split ('/$\R?^/m', $sql);
+//		$query = array();
+//		$putLine = false;
+//		foreach ($array as $line) {
+//			if ($putLine && preg_match('/\\./', $line)) {
+//				$putLine = false;
+//				$return[] = array('pg_end_copy', '');
+//				continue;
+//			}
+//
+//			if ($putLine) {
+//				$return[] = array('pg_put_line', $line);
+//				continue;
+//			}
+//
+//			$hasCopy = self::hasCopyFromStdin($line);
+//			$query[] = $line;
+//			if (!$hasCopy) {
+//				continue;
+//			}
+//
+//			$putLine = true;
+//			$return[] = array('pg_query', implode(PHP_EOL, $query));
+//			$query = array();
+//		}
+//		if (!empty($query)) {
+//			$return[] = array('pg_query', implode(PHP_EOL, $query));
+//		}
+//
+//		return $return;
+//	}
+
 }

@@ -7,21 +7,18 @@ function includeIfExists($file)
 	}
 }
 
+// Define path to application directory
+defined('APPLICATION_PATH')
+|| define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
+
+
 if ((!$loader = includeIfExists(__DIR__.'/../vendor/autoload.php')) && (!$loader = includeIfExists(__DIR__.'/../../../autoload.php'))) {
 	die('You must set up the project dependencies, run the following commands:'.PHP_EOL.
 		'curl -s http://getcomposer.org/installer | php'.PHP_EOL.
 		'php composer.phar install'.PHP_EOL);
 }
 
-
-
-if (is_dir(__DIR__ . '/../application/')) {
-	define('APPLICATION_PATH', __DIR__ . '/../application/');
-} else if (is_dir(__DIR__ . '/../../../../application/')) {
-	define('APPLICATION_PATH', __DIR__ . '/../../../../application/');
-} else {
-	die('Could not set APPLICATION_PATH'.PHP_EOL);
-}
+//require_once APPLICATION_PATH . '/../vendor/autoload.php';
 
 require_once 'ArrayDataSet.php';
 

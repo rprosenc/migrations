@@ -1,8 +1,10 @@
 <?php
 
-namespace TwentyFifth\Migrations\Test\Component;
+namespace TwentyFifth\Migrations\Manager;
 
-use \TwentyFifth\Migrations\Manager\SchemaManager;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\PDOPgSql\Driver;
+use TwentyFifth\Migrations\Manager\ConfigManager\PopoManager;
 
 class SchemaManagerTest
 	extends \PHPUnit_Extensions_Database_TestCase
@@ -23,7 +25,7 @@ class SchemaManagerTest
 	{
 		if (!isset(self::$connection)) {
 			if (!isset(self::$pdo)) {
-				self::$pdo = new \PDO('pgsql:dbname=migrations_test', 'bountin');
+				self::$pdo = new \PDO('pgsql:dbname=migrations_test', 'postgres');
 			}
 
 			self::$connection = $this->createDefaultDBConnection(self::$pdo);
@@ -34,17 +36,32 @@ class SchemaManagerTest
 
 	public function getDbalConnection()
 	{
-		$driver = new \Doctrine\DBAL\Driver\PDOPgSql\Driver();
-		$connection = new \Doctrine\DBAL\Connection(array(
+		$driver = new Driver();
+		$connection = new Connection(array(
 				'pdo'=>$this->getConnection()->getConnection(),
 				'dbname' => 'migrations_test',
-				'user' => 'bountin',
+				'user' => 'postgres',
 				'password' => '',
 				'host' => 'localhost',
 				'port' => '5432',
 			), $driver
 		);
 		return $connection;
+	}
+
+	/**
+	 * @return PopoManager
+	 */
+	public function getConfigManager()
+	{
+		$config = new PopoManager();
+		$config->setHost('localhost')
+			->setDatabase('migrations_test')
+			->setPort(5432)
+			->setUsername('postgres')
+			->setPassword('');
+
+		return $config;
 	}
 
 	/**
@@ -62,7 +79,7 @@ class SchemaManagerTest
 
 	public function setUp()
 	{
-		$sm = new SchemaManager($this->getDbalConnection());
+		$sm = new SchemaManager($this->getConfigManager());
 		$this->migrationTableName = $sm->getMigrationTableName();
 
 		$this->getConnection()->getConnection()->exec('DROP TABLE IF EXISTS '.$this->migrationTableName);
@@ -83,7 +100,7 @@ class SchemaManagerTest
 		$tables = $this->getConnection()->getMetaData()->getTableNames();
 		$this->assertNotContains($this->migrationTableName, $tables);
 
-		$sm = new SchemaManager($this->getDbalConnection());
+		$sm = new SchemaManager($this->getConfigManager());
 		$sm->ensureMigrationsTableExists();
 
 		$tables = $this->getConnection()->getMetaData()->getTableNames();
@@ -92,7 +109,7 @@ class SchemaManagerTest
 
 	public function testManagerWorksWithExistingMigrationsTable()
 	{
-		$sm = new SchemaManager($this->getDbalConnection());
+		$sm = new SchemaManager($this->getConfigManager());
 		$sm->ensureMigrationsTableExists();
 		$sm->ensureMigrationsTableExists();
 
@@ -105,7 +122,7 @@ class SchemaManagerTest
 	 */
 	public function testManagerListsCorrectUnappliedMigrations($data_to_insert, $migration_list, $expected_list)
 	{
-		$sm = new SchemaManager($this->getDbalConnection());
+		$sm = new SchemaManager($this->getConfigManager());
 
 		foreach ($data_to_insert as $line) {
 			$this->getDbalConnection()->insert($this->migrationTableName, $line);
@@ -154,7 +171,7 @@ class SchemaManagerTest
 
 	protected function executeMigration($name, $sql)
 	{
-		$sm = new SchemaManager($this->getDbalConnection());
+		$sm = new SchemaManager($this->getConfigManager());
 		return $sm->executeMigration($name, $sql, $this->getMock('Symfony\Component\Console\Output\OutputInterface'));
 	}
 

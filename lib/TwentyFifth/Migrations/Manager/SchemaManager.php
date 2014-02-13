@@ -118,7 +118,11 @@ class SchemaManager
 	public function executeSQL($sql)
 	{
 		if (!self::hasCopyFromStdin($sql)) {
-			pg_query($this->getConnection(), $sql);
+			$conn = $this->getConnection();
+			$success = @pg_query($conn, $sql);
+			if (!$success) {
+				throw new \Exception(pg_last_error($this->getConnection()));
+			}
 			return;
 		}
 

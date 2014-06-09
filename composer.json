@@ -16,7 +16,7 @@
 		"php": ">=5.3",
 		"doctrine/dbal": ">2.1.0",
 		"ext-pgsql": "*",
-		"phpunit/phpunit": ">=3.7.*",
+		"phpunit/phpunit": ">=3.7.0",
 		"phpunit/dbunit": ">=1.2",
 		"symfony/Console": ">=2.0"
 	},

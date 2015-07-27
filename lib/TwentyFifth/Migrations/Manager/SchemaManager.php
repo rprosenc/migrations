@@ -41,6 +41,10 @@ class SchemaManager
 				$this->configManager->getPassword()
 			);
 			$this->pg_connection = pg_connect($conn_string);
+
+			if (!$this->pg_connection) {
+				throw new \Exception(sprintf('Cannot connect to Database using connection string "%s"', $conn_string));
+			}
 		}
 
 		return $this->pg_connection;

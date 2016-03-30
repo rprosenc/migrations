@@ -17,12 +17,6 @@ if ((!$loader = includeIfExists(__DIR__.'/../../../autoload.php'))) {
 		'php composer.phar install'.PHP_EOL);
 }
 
-if (getenv('APPLICATION_ENV')) {
-	define('APPLICATION_ENV', getenv('APPLICATION_ENV'));
-} else {
-	die('Please set the APPLICATION_ENV'.PHP_EOL);
-}
-
 $sqlDirectory = '';
 
 // ZF2

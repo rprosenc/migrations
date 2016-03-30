@@ -19,6 +19,10 @@ class ZF2Manager implements ConfigInterface
 
 	function __construct($configuration)
 	{
+		if (!getenv('APPLICATION_ENV')) {
+			die('Please set the APPLICATION_ENV'.PHP_EOL);
+		}
+
 		$app = Application::init($configuration);
 		$config = $app->getConfig();
 

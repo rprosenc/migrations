@@ -24,9 +24,13 @@ class ZF1Manager implements ConfigInterface {
 	 */
 	function __construct($application_path)
 	{
+		if (!getenv('APPLICATION_ENV')) {
+			die('Please set the APPLICATION_ENV'.PHP_EOL);
+		}
+
 		$this->application_path = $application_path;
 
-		$zend_config = new \Zend_Config_Ini($application_path . '/configs/application.ini', APPLICATION_ENV);
+		$zend_config = new \Zend_Config_Ini($application_path . '/configs/application.ini', getenv('APPLICATION_ENV'));
 		$this->setConfig($zend_config);
 	}
 

@@ -64,48 +64,4 @@ SQL;
 	{
 		$this->assertFalse(SchemaManager::hasCopyFromStdin("SELECT * from copy_foo;"));
 	}
-
-	public function testExtractCommandsFromSql()
-	{
-		$sql = <<<SQL
-SELECT * FROM foo;
-SELECT * FROM COPY WHERE stdin = 2;
-
---
--- TOC entry 1931 (class 0 OID 30000)
--- Dependencies: 162 1938
--- Data for Name: plugins; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY plugins (plu_id, plu_name, plu_active, plu_timer_type, plu_timer_default, plu_function) FROM stdin;
-14	SimpleQuery::TableStatio	f	run_at	0 0 * * *	create_customer_database_statio_tables
-14	SimpleQuery::TableStatio	f	run_at	0 0 * * *	create_customer_database_statio_tables
-14	SimpleQuery::TableStatio	f	run_at	0 0 * * *	create_customer_database_statio_tables
-\.
-
-SELECT * from bar;
-SQL;
-
-		$expected = array(
-			array('pg_query',
-"SELECT * FROM foo;
-SELECT * FROM COPY WHERE stdin = 2;
-
---
--- TOC entry 1931 (class 0 OID 30000)
--- Dependencies: 162 1938
--- Data for Name: plugins; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY plugins (plu_id, plu_name, plu_active, plu_timer_type, plu_timer_default, plu_function) FROM stdin;"),
-			array('pg_put_line', "14	SimpleQuery::TableStatio	f	run_at	0 0 * * *	create_customer_database_statio_tables"),
-			array('pg_put_line', "14	SimpleQuery::TableStatio	f	run_at	0 0 * * *	create_customer_database_statio_tables"),
-			array('pg_put_line', "14	SimpleQuery::TableStatio	f	run_at	0 0 * * *	create_customer_database_statio_tables"),
-			array('pg_end_copy', ""),
-			array('pg_query', "
-SELECT * from bar;"),
-		);
-
-		$this->assertEquals($expected, SchemaManager::extractCommandsFromSql($sql));
-	}
 }

@@ -39,6 +39,14 @@ if (is_readable(__DIR__ . '/../config/application.config.php')) {
 	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\ZF1Manager(__DIR__ . '/../../../../application/');
 	$sqlDirectory = __DIR__ . '/../../../../docs/sql/';
 
+// Symfony
+} else if (is_readable(__DIR__ . '/../app/config/parameters.yml')) {
+	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\SymfonyManager(__DIR__ . '/../app/config/parameters.yml');
+	$sqlDirectory = __DIR__ . '/../sql/';
+} else if (is_readable(__DIR__ . '/../../../../app/config/parameters.yml')) {
+	$configManager = new \TwentyFifth\Migrations\Manager\ConfigManager\SymfonyManager(__DIR__ . '/../../../../app/config/parameters.yml');
+	$sqlDirectory = __DIR__ . '/../../../../sql/';
+
 // UNKNOWN
 } else {
 	die('Could not set APPLICATION_PATH'.PHP_EOL);

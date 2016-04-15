@@ -6,7 +6,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOPgSql\Driver;
 use TwentyFifth\Migrations\Manager\ConfigManager\PopoManager;
 
-class SchemaManagerTest
+class SchemaManagerComponentTest
 	extends \PHPUnit_Extensions_Database_TestCase
 {
 

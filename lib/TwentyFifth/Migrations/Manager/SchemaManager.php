@@ -32,18 +32,11 @@ class SchemaManager
 	protected function getConnection()
 	{
 		if (!isset($this->pg_connection)) {
-			$conn_string = sprintf(
-				'host=%s port=%s dbname=%s user=%s password=%s',
-				$this->configManager->getHost(),
-				$this->configManager->getPort(),
-				$this->configManager->getDatabase(),
-				$this->configManager->getUsername(),
-				$this->configManager->getPassword()
-			);
-			$this->pg_connection = pg_connect($conn_string);
+			$connectionString = $this->getConnectionString();
+			$this->pg_connection = pg_connect($connectionString);
 
 			if (!$this->pg_connection) {
-				throw new \Exception(sprintf('Cannot connect to Database using connection string "%s"', $conn_string));
+				throw new \Exception(sprintf('Cannot connect to Database using connection string "%s"', $connectionString));
 			}
 		}
 
@@ -147,5 +140,22 @@ class SchemaManager
 		}
 
 		return preg_match('/COPY .* FROM stdin;/i', $string) ? true : false;
+	}
+
+	/**
+	 * Creates the connection string used by pg_connect to connect to the database
+	 * @return string
+	 */
+	protected function getConnectionString()
+	{
+		$conn_string = sprintf(
+			'host=%s port=%s dbname=%s user=%s password=%s',
+			$this->configManager->getHost(),
+			$this->configManager->getPort(),
+			$this->configManager->getDatabase(),
+			$this->configManager->getUsername(),
+			$this->configManager->getPassword()
+		);
+		return $conn_string;
 	}
 }

@@ -148,14 +148,20 @@ class SchemaManager
 	 */
 	protected function getConnectionString()
 	{
-		$conn_string = sprintf(
+		return sprintf(
 			'host=%s port=%s dbname=%s user=%s password=%s',
-			$this->configManager->getHost(),
-			$this->configManager->getPort(),
-			$this->configManager->getDatabase(),
-			$this->configManager->getUsername(),
-			$this->configManager->getPassword()
+			$this->escapeParameter($this->configManager->getHost()),
+			$this->escapeParameter($this->configManager->getPort()),
+			$this->escapeParameter($this->configManager->getDatabase()),
+			$this->escapeParameter($this->configManager->getUsername()),
+			$this->escapeParameter($this->configManager->getPassword())
 		);
-		return $conn_string;
 	}
+
+	private function escapeParameter($parameter)
+	{
+		$escaped = str_replace('\\', '\\\\', $parameter);
+		return str_replace("'", "\\'", $escaped);
+	}
+
 }

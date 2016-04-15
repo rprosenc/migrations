@@ -18,7 +18,7 @@ class SymfonyManager implements ConfigInterface
 
     /**
      * SymfonyManager constructor.
-     * @param string $string
+     * @param $application_path
      */
     public function __construct($application_path)
     {

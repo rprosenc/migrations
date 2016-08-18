@@ -56,7 +56,8 @@ class SymfonyManager implements ConfigInterface
      */
     public function setDatabase($database)
     {
-        $this->parameters['database_name'] = $database;
+        $this->parameters['database_name'] = (string) $database;
+        return $this;
     }
 
     /**
@@ -65,6 +66,17 @@ class SymfonyManager implements ConfigInterface
     public function getUsername()
     {
         return $this->parameters['database_user'];
+    }
+
+    /**
+     * @param string $username
+     *
+     * return ConfigInterface
+     */
+    public function setUserName($username)
+    {
+        $this->parameters['database_user'] = (string) $username;
+        return $this;
     }
 
     /**

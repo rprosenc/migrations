@@ -10,36 +10,43 @@
 namespace TwentyFifth\Migrations\Manager\ConfigManager;
 
 
-interface ConfigInterface {
-	/**
-	 * @return string Hostname
-	 */
-	public function getHost();
+interface ConfigInterface
+{
+    /**
+     * @return string Hostname
+     */
+    public function getHost();
 
-	/**
-	 * @return string Port
-	 */
-	public function getPort();
+    /**
+     * @return string Port
+     */
+    public function getPort();
 
-	/**
-	 * @return string Database name
-	 */
-	public function getDatabase();
+    /**
+     * @return string Database name
+     */
+    public function getDatabase();
 
-	/**
-	 * @param string $database
-	 *
-	 * @return ConfigInterface
-	 */
-	public function setDatabase($database);
+    /**
+     * @param string $database
+     *
+     * @return ConfigInterface
+     */
+    public function setDatabase($database);
 
-	/**
-	 * @return string Username
-	 */
-	public function getUsername();
+    /**
+     * @return string Username
+     */
+    public function getUsername();
 
-	/**
-	 * @return string Password
-	 */
-	public function getPassword();
+    /**
+     * @param string $username
+     * @return ConfigInterface
+     */
+    public function setUserName($username);
+
+    /**
+     * @return string Password
+     */
+    public function getPassword();
 }

@@ -42,3 +42,15 @@ During runtime a APPLICATION_ENV must be set!
 `migrations apply <sql-file-name>` will apply the changeset <sql-file-name>.
 
 With the `--only-mark` option you can apply the migration without executing it.
+
+# Development
+
+Running Tests:
+```
+# Unit tests
+vendor/bin/phpunit tests/unit/
+
+# Component tests
+docker-compose up -d
+vendor/bin/phpunit tests/component/
+```

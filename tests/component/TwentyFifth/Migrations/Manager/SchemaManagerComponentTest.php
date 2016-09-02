@@ -4,6 +4,7 @@ namespace TwentyFifth\Migrations\Manager;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOPgSql\Driver;
+use TwentyFifth\Migrations\Exception\RuntimeException;
 use TwentyFifth\Migrations\Manager\ConfigManager\PopoManager;
 
 class SchemaManagerComponentTest
@@ -175,7 +176,7 @@ class SchemaManagerComponentTest
 		$outputMock = \PHPUnit_Framework_TestCase::createMock('Symfony\Component\Console\Output\OutputInterface');
 
 		$sm = new SchemaManager($this->getConfigManager());
-		return $sm->executeMigration($name, $sql, $outputMock);
+		$sm->executeMigration($name, $sql, $outputMock);
 	}
 
 	protected function getMigrationsDataset()
@@ -201,9 +202,6 @@ class SchemaManagerComponentTest
 	{
 		$result = $this->executeMigration('simple.sql', 'CREATE TABLE test (id int);');
 
-		$this->assertTrue($result, 'Expected a success');
-
-
 		$simple_metadata = new \PHPUnit_Extensions_Database_DataSet_DefaultTableMetaData(
 			'test', array('id')
 		);
@@ -221,8 +219,6 @@ class SchemaManagerComponentTest
 	public function testManagerExecutesTwoCreateTableInOneStatement()
 	{
 		$result = $this->executeMigration('simple.sql', 'CREATE TABLE foo (id int); CREATE TABLE bar (id int);');
-
-		$this->assertTrue($result, 'Expected a success');
 
 		$simple_metadata1 = new \PHPUnit_Extensions_Database_DataSet_DefaultTableMetaData(
 			'foo', array('id')
@@ -244,20 +240,35 @@ class SchemaManagerComponentTest
 
 	public function testExecutingManagerWithInvalidSql()
 	{
-		$result = $this->executeMigration('simple.sql', 'CREATE TABLE test;');
-		$this->assertExecutionFailure($result);
+		try {
+			$this->executeMigration('simple.sql', 'CREATE TABLE test;');
+		} catch (RuntimeException $e) {
+			$this->assertExecutionFailure();
+			return;
+		}
+		$this->fail('Expected an exception');
 	}
 
 	public function testExecutingManagerWithEmbeddedTransactionFails()
 	{
-		$result = $this->executeMigration('simple.sql', 'BEGIN; CREATE TABLE test; COMMIT;');
-		$this->assertExecutionFailure($result);
+		try {
+			$this->executeMigration('simple.sql', 'BEGIN; CREATE TABLE test; COMMIT;');
+		} catch (RuntimeException $e) {
+			$this->assertExecutionFailure();
+			return;
+		}
+		$this->fail('Expected an exception');
 	}
 
-	protected function assertExecutionFailure($result)
-	{
-		$this->assertFalse($result, 'Expected a failure');
+	/**
+	 * @expectedException RuntimeException
+	 */
+	public function testInvalidSqlTriggersAnException() {
+		$this->executeMigration('simple.sql', 'CREATE TABLE test;');
+	}
 
+	protected function assertExecutionFailure()
+	{
 		$actual_dataset = $this->getActualDataSet($this->getConnection()->getMetaData()->getTableNames());
 		$this->assertDataSetsEqual(
 			$this->getMigrationsDataset(),

@@ -61,7 +61,7 @@ class Apply
 
 		$sql = file_get_contents($next_migration_path);
 		if ($only_mark) {
-			$this->schema_manager->markMigration($next_migration_short_name, $output);
+			$this->schema_manager->markMigration($next_migration_short_name);
 			$output->writeln(sprintf('Migration %s marked as applied.', $next_migration_short_name));
 		} else {
 			$this->schema_manager->executeMigration($next_migration_short_name, $sql, $output);

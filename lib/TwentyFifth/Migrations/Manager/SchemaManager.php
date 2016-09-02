@@ -99,16 +99,17 @@ class SchemaManager
 
 		$output->writeln('Starting '.$name);
 		pg_query($this->getConnection(), 'BEGIN');
+
 		try {
 			$this->executeSQL($sql);
 			$this->markMigration($name);
 			pg_query($this->getConnection(), 'COMMIT');
+
 			$output->writeln($name.' is committed');
-			return true;
 		} catch (\Exception $e) {
 			pg_query($this->getConnection(), 'ROLLBACK');
 			$output->writeln('Failed: '.$e->getMessage());
-			return false;
+			throw new RuntimeException($e->getMessage());
 		}
 	}
 

@@ -1,10 +1,8 @@
-25th Migrations
-===============
+# 25th Migrations
 
 This module allows to upgrade the database after source code changes by applying sql files in the database.
 
-Installation
-============
+# Installation
 
 Just install via composer
 
@@ -21,8 +19,7 @@ you the possibility to define a bin-dir where all executabls are symlinked.
 }
 ```
 
-Configuration
-=============
+# Configuration
 
 Migrations is configured via ZF1's application.ini which is loaded from `/application/configs/application.ini`.
 
@@ -30,16 +27,13 @@ Currently only Doctrine's DBAL configuration is used.
 
 During runtime a APPLICATION_ENV must be set!
 
-Usage
-=====
+# Usage
 
-migrations status
------------------
+## migrations status
 
 `migrations status` will show you a list of all unapplied changes.
 
-migrations apply
-----------------
+## migrations apply
 
 `migrations apply next` will apply the next changeset.
 

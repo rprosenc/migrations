@@ -25,7 +25,7 @@ class SchemaManagerComponentTest
 	{
 		if (!isset(self::$connection)) {
 			if (!isset(self::$pdo)) {
-				self::$pdo = new \PDO('pgsql:dbname=migrations_test', 'postgres');
+				self::$pdo = new \PDO('pgsql:host=127.0.0.1;dbname=migrations_test', 'postgres');
 			}
 
 			self::$connection = $this->createDefaultDBConnection(self::$pdo);
@@ -42,7 +42,7 @@ class SchemaManagerComponentTest
 				'dbname' => 'migrations_test',
 				'user' => 'postgres',
 				'password' => '',
-				'host' => 'localhost',
+				'host' => '127.0.0.1',
 				'port' => '5432',
 			), $driver
 		);

@@ -32,7 +32,7 @@ class FileManagerTest
 			'foo' => array(),
 		));
 
-		$fm = new FileManager(vfsStream::url('foo'));
+		$fm = new FileManager($this->root->url() . '/foo');
 
 		$this->assertInstanceOf('TwentyFifth\Migrations\Manager\FileManager', $fm);
 	}
@@ -49,7 +49,7 @@ class FileManagerTest
 			),
 		));
 
-		$fm = new FileManager(vfsStream::url('foo'));
+		$fm = new FileManager($this->root->url() . '/foo');
 		$result = $fm->getOrderedFileList();
 
 		$this->assertEmpty($result);
@@ -66,12 +66,12 @@ class FileManagerTest
 
 		$expected = array();
 		foreach ($files as $filename => $content) {
-			$expected[$filename] = 'vfs://testDirectory/'.$filename;
+			$expected[$filename] = $this->root->url() . '/testDirectory/'.$filename;
 		}
 
 		vfsStream::create($directory_structure);
 
-		$fm = new FileManager(vfsStream::url('testDirectory'));
+		$fm = new FileManager($this->root->url() . '/testDirectory');
 
 		$this->assertEquals($expected, $fm->getOrderedFileList());
 	}
@@ -87,7 +87,7 @@ class FileManagerTest
 
 		vfsStream::create($directory_structure);
 
-		$fm = new FileManager(vfsStream::url('testDirectory'));
+		$fm = new FileManager($this->root->url() . '/testDirectory');
 		$result = $fm->getOrderedFileList();
 
 		$this->assertEquals($expectedOrder, array_keys($result));

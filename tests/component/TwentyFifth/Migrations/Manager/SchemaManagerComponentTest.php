@@ -171,14 +171,17 @@ class SchemaManagerComponentTest
 
 	protected function executeMigration($name, $sql)
 	{
+		/** @var \Symfony\Component\Console\Output\OutputInterface $outputMock */
+		$outputMock = \PHPUnit_Framework_TestCase::createMock('Symfony\Component\Console\Output\OutputInterface');
+
 		$sm = new SchemaManager($this->getConfigManager());
-		return $sm->executeMigration($name, $sql, $this->getMock('Symfony\Component\Console\Output\OutputInterface'));
+		return $sm->executeMigration($name, $sql, $outputMock);
 	}
 
 	protected function getMigrationsDataset()
 	{
 		$migrations_metadata = new \PHPUnit_Extensions_Database_DataSet_DefaultTableMetaData(
-			'migrations', array('mig_applied', 'mig_title')
+			'migrations', array('mig_title', 'mig_applied')
 		);
 		$migrations_table = new \PHPUnit_Extensions_Database_DataSet_DefaultTable($migrations_metadata);
 		$migrations_dataset = new \PHPUnit_Extensions_Database_DataSet_DefaultDataSet(array($migrations_table));

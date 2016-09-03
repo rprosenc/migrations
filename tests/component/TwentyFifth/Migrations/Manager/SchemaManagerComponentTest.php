@@ -6,9 +6,10 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOPgSql\Driver;
 use TwentyFifth\Migrations\Exception\RuntimeException;
 use TwentyFifth\Migrations\Manager\ConfigManager\PopoManager;
+use TwentyFifth\Test\DatabaseTestCase;
 
 class SchemaManagerComponentTest
-	extends \PHPUnit_Extensions_Database_TestCase
+	extends DatabaseTestCase
 {
 
 	/* @var \PDO */
@@ -286,14 +287,7 @@ class SchemaManagerComponentTest
 	{
 		$actualDataset = new \PHPUnit_Extensions_Database_DataSet_QueryDataSet($this->getConnection());
 		foreach ((array)$tables as $table) {
-			$query = null;
-
-			if ($table == 'migrations') {
-				# Required because of https://github.com/sebastianbergmann/dbunit/issues/16
-				$query = 'SELECT mig_title, mig_applied FROM migrations ORDER BY mig_title';
-			}
-
-			$actualDataset->addTable($table, $query);
+			$actualDataset->addTable($table);
 		}
 		return $actualDataset;
 	}

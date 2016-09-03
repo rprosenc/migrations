@@ -1,5 +1,7 @@
 # 25th Migrations
 
+[![Build Status](https://travis-ci.org/25th-floor/migrations.svg?branch=master)](https://travis-ci.org/25th-floor/migrations)
+
 This module allows to upgrade the database after source code changes by applying sql files in the database.
 
 # Installation

@@ -13,8 +13,6 @@ use Bisna\Doctrine\Container as DoctrineContainer;
 abstract class AbstractCommand
 	extends Console\Command\Command
 {
-	private $bisna_container;
-
 	/* @var ConfigInterface */
 	private $config_manager;
 

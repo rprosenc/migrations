@@ -5,6 +5,7 @@ namespace TwentyFifth\Migrations\Command;
 use Symfony\Component\Console;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use TwentyFifth\Migrations\Exception\RuntimeException;
 use TwentyFifth\Migrations\Manager\ConfigManager\ConfigInterface;
 
 class Apply
@@ -28,22 +29,26 @@ class Apply
 
 	public function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
 	{
-		parent::execute($input, $output);
+		try {
+			parent::execute($input, $output);
 
-		$target = $input->getArgument('what');
-		$only_mark = $input->getOption('only-mark');
+			$target = $input->getArgument('what');
+			$only_mark = $input->getOption('only-mark');
 
-		switch ($target) {
-			case 'next':
-				$this->migrateNext($output, $only_mark);
-				break;
-			case 'all':
-				$this->migrateAll($output, $only_mark);
-				break;
-			default:
-				$this->migrateByName($output, $only_mark, $target);
-				break;
-		}
+            switch ($target) {
+                case 'next':
+                    $this->migrateNext($output, $only_mark);
+                    break;
+                case 'all':
+                    $this->migrateAll($output, $only_mark);
+                    break;
+                default:
+                    $this->migrateByName($output, $only_mark, $target);
+                    break;
+            }
+        } catch (RuntimeException $e) {
+            return 1;
+        }
 	}
 
 	protected function migrateNext(Console\Output\OutputInterface $output, $only_mark)
@@ -51,8 +56,8 @@ class Apply
 		$missing_migrations = $this->getMissingMigrations();
 
 		if (0 === count($missing_migrations)) {
-			$this->errors[] = "All migration files are already applied.\nNothing to do";
-			$this->outputErrorsAndExit($output,0);
+			$output->writeln("All migration files are already applied.\nNothing to do");
+			return;
 		}
 
 		// Choose next migration configuration
@@ -73,8 +78,8 @@ class Apply
 		$missing_migrations = $this->getMissingMigrations();
 
 		if (0 === count($missing_migrations)) {
-			$this->errors[] = "All migration files are already applied.\nNothing to do";
-			$this->outputErrorsAndExit($output,0);
+			$output->writeln("All migration files are already applied.\nNothing to do");
+			return;
 		}
 
 		foreach ($missing_migrations as $shortname => $path) {
@@ -96,15 +101,13 @@ class Apply
 		$all_migrations = $this->file_manager->getOrderedFileList();
 
 		if (!array_key_exists($target, $all_migrations)) {
-			$this->errors[] = "Migration $target was not found";
-			$this->outputErrorsAndExit($output);
+			throw new RuntimeException("Migration $target was not found");
 		}
 
 		$missing_migrations = $this->schema_manager->getNotAppliedMigrations($all_migrations);
 
 		if (!array_key_exists($target, $missing_migrations)) {
-			$this->errors[] = "Migration $target exists but is already applied.";
-			$this->outputErrorsAndExit($output);
+			throw new RuntimeException("Migration $target exists but is already applied.");
 		}
 
 		$sql = file_get_contents($missing_migrations[$target]);

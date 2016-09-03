@@ -33,13 +33,6 @@ abstract class AbstractCommand
 		$this->addOption('database',null,InputOption::VALUE_REQUIRED,'Override Database');
 	}
 
-	protected function outputErrorsAndExit(Console\Output\OutputInterface $output, $code = 1)
-	{
-		$output->writeln($this->errors);
-		$output->writeln($this->getSynopsis());
-		exit($code);
-	}
-
 	public function execute(Console\Input\InputInterface $input, Console\Output\OutputInterface $output)
 	{
 		// override database
@@ -48,12 +41,7 @@ abstract class AbstractCommand
 			$this->config_manager->setDatabase($database);
 		}
 
-		try {
-			$this->schema_manager = new SchemaManager($this->config_manager);
-		} catch (\Exception $e) {
-			$this->errors[] = $e->getMessage();
-			$this->outputErrorsAndExit($output, 1);
-		}
+		$this->schema_manager = new SchemaManager($this->config_manager);
 	}
 
 	protected function getMissingMigrations()

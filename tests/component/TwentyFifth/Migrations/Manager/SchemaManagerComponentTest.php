@@ -286,7 +286,14 @@ class SchemaManagerComponentTest
 	{
 		$actualDataset = new \PHPUnit_Extensions_Database_DataSet_QueryDataSet($this->getConnection());
 		foreach ((array)$tables as $table) {
-			$actualDataset->addTable($table);
+			$query = null;
+
+			if ($table == 'migrations') {
+				# Required because of https://github.com/sebastianbergmann/dbunit/issues/16
+				$query = 'SELECT mig_title, mig_applied FROM migrations ORDER BY mig_title';
+			}
+
+			$actualDataset->addTable($table, $query);
 		}
 		return $actualDataset;
 	}

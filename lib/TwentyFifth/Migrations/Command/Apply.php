@@ -91,7 +91,7 @@ class Apply
                 try {
                     $this->schema_manager->executeMigration($shortname, $sql, $output);
                 } catch(\Exception $e) {
-                    return
+                    return;
                 }
             }
         }

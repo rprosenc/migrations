@@ -88,9 +88,10 @@ class Apply
                 $this->schema_manager->markMigration($shortname, $output);
                 $output->writeln(sprintf('Migration %s marked as applied.', $shortname));
             } else {
-                $result = $this->schema_manager->executeMigration($shortname, $sql, $output);
-                if (!$result) {
-                    return;
+                try {
+                    $this->schema_manager->executeMigration($shortname, $sql, $output);
+                } catch(\Exception $e) {
+                    return
                 }
             }
         }

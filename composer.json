@@ -8,9 +8,9 @@
 	],
 	"require": {
 		"php": ">=5.3",
-		"doctrine/dbal": "^2.1.0",
+		"doctrine/dbal": "^2.1",
 		"ext-pgsql": "*",
-		"symfony/Console": "^2.0"
+		"symfony/Console": "^2.0|^3.0"
 	},
 	"require-dev": {
 		"mikey179/vfsStream": "*",
